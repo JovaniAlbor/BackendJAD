@@ -122,7 +122,41 @@ router.put('/actualizar_direccion/:iddir', async (req, res) => {
     }
 });
 
+// Rutas para la tabla carrera
+// Consultar registros de la tabla carrera
+router.get('/consulta_carrera', async (req, res) => {
+    const consultacarrera = await carrera.findAll();
+    res.status(200).json({ body: consultacarrera });
+});
 
+// Consultar un registro en la tabla carrera mediante el id
+router.get('/consulta_carrera/:idcar', async (req, res) => {
+    const idcar = req.params.idcar;
+    const consultacarrera = await carrera.findOne({ where: { id_car: idcar } });
+    res.status(200).json({ body: consultacarrera });
+});
+
+// Insertar un nuevo registro en la tabla carrera
+router.post('/insertar_carrera', async (req, res) => {
+    const car = req.body;
+    const insertarcarrera = await carrera.create(car);
+    res.status(200).json({ body: insertarcarrera });
+});
+
+// Eliminar un registro en la tabla carrera
+router.delete('/eliminar_carrera/:idcar', async (req, res) => {
+    const idcar = req.params.idcar;  // Obtén el ID del registro desde los parámetros de la URL
+    try {
+        const eliminado = await carrera.destroy({ where: { id_car: idcar } });
+        if (eliminado) {
+            res.status(200).json({ message: `Registro con ID ${idcar} eliminado correctamente` });
+        } else {
+            res.status(404).json({ message: `No se encontró un registro con ID ${idcar}` });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar el registro', error });
+    }
+});
 
 // Actualizar un registro de la tabla direccion
 router.put('/actualizar_carrera/:idcar', async (req, res) => {
