@@ -61,6 +61,64 @@ router.put('/actualizar/:iddp', async (req, res) => {
     }
 });
 
+// Rutas para la tabla direccion
+//consultar registros de la tabla direccion
+router.get('/consulta_direccion', async (req, res) => {
+    const consultadireccion = await direccion.findAll();
+    res.status(200).json({ body: consultadireccion });
+});
+
+//consultar un registro en la tabla direccion mediante el id
+router.get('/consulta_direccion/:iddir', async (req, res) => {
+    const iddir = req.params.iddir;
+    const consultadireccion = await direccion.findOne({ where: { id_dir: iddir } });
+    res.status(200).json({ body: consultadireccion });
+});
+
+// Insertar un nuevo registro en la tabla direccion
+router.post('/insertar_direccion', async (req, res) => {
+    const dir = req.body;
+    const insertardireccion = await direccion.create(dir);
+    res.status(200).json({ body: insertardireccion });
+});
+
+// Eliminar un registro de la tabla direccion
+router.delete('/eliminar_direccion/:iddir', async (req, res) => {
+    const iddir = req.params.iddir;  // Obtén el ID del registro desde los parámetros de la URL
+    try {
+        const eliminado = await direccion.destroy({ where: { id_dir: iddir } });
+        if (eliminado) {
+            res.status(200).json({ message: `Registro con ID ${iddir} eliminado correctamente` });
+        } else {
+            res.status(404).json({ message: `No se encontró un registro con ID ${iddir}` });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar el registro', error });
+    }
+});
+
+// Actualizar un registro de la tabla direccion
+router.put('/actualizar_direccion/:iddir', async (req, res) => {
+    const iddir = req.params.iddir; // Obtenemos el ID del parámetro de la URL
+    const { calle,colonia,municipio,codigo_postal,num } = req.body;
+    
+    try {
+        // Actualizamos el registro con los nuevos valores
+        const [actualizado] = await direccion.update(
+            { calle,colonia,municipio,codigo_postal,num},
+            { where: { id_dir: iddir } }
+        );
+
+        if (actualizado) {
+            res.status(200).json({ message: `Registro con ID ${iddir} actualizado exitosamente.` });
+        } else {
+            res.status(404).json({ message: `No se encontró un registro con ID ${iddir}.` });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al actualizar el registro nuevo.' });
+    }
+});
 
 
 
